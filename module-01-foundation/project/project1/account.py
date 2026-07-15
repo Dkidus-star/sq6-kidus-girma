@@ -22,7 +22,7 @@ class Account:
         if amount > self.__balance:
             raise ValueError("Insufficient balance")
 
-        self.__balance -= amount
+        self._Account__balance -= amount
         print(f"{amount} ETB withdrawn successfully.")
 
     def statement(self):
