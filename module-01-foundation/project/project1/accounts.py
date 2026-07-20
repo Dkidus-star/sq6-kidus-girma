@@ -36,6 +36,8 @@ class CurrentAccount(Account):
 
         self._Account__balance -= amount
 
+        self.history.append(("withdraw", amount))  
+
         print(f"{amount} ETB withdrawn successfully.")
 
         self._notify(f"{amount} ETB withdrawn.")

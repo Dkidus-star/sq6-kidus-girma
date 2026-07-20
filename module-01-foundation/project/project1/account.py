@@ -5,6 +5,9 @@ class Account:
         self.__balance = balance
         self._observers = []
 
+        
+        self.history = []
+
     @property
     def balance(self):
         return self.__balance
@@ -21,8 +24,11 @@ class Account:
             raise ValueError("Amount must be positive")
 
         self.__balance += amount
-        print(f"{amount} ETB deposited successfully.")
 
+        # save transaction
+        self.history.append(("deposit", amount))
+
+        print(f"{amount} ETB deposited successfully.")
         self._notify(f"{amount} ETB deposited.")
 
     def withdraw(self, amount):
@@ -33,8 +39,11 @@ class Account:
             raise ValueError("Insufficient balance")
 
         self.__balance -= amount
-        print(f"{amount} ETB withdrawn successfully.")
 
+        # save transaction
+        self.history.append(("withdraw", amount))
+
+        print(f"{amount} ETB withdrawn successfully.")
         self._notify(f"{amount} ETB withdrawn.")
 
     def statement(self):
