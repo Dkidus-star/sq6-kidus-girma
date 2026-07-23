@@ -18,5 +18,3 @@ class AccountFactory:
 
         else:
             raise ValueError("Unknown account type")
-from registry import AccountRegistry        
-        

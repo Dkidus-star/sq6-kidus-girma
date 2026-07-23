@@ -50,8 +50,6 @@ def test_account_functionality():
     print("\nAfter Undo")
     account.statement()
 
-   
-
     print("\nTop 2 Accounts by Balance")
 
     top_accounts = registry.top_by_balance(2)
@@ -73,7 +71,8 @@ def test_account_functionality():
     print()
 
     total = registry.total_transactions("1000224080786")
-    print("Total Transactions:", total, "ETB")
+    print("Total Transactions Volume:", total, "ETB")
 
 
-test_account_functionality()
+if __name__ == "__main__":
+    test_account_functionality()

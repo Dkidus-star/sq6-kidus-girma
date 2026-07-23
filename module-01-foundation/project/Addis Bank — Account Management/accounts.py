@@ -5,7 +5,6 @@ from config import BankConfig
 class SavingsAccount(Account):
     def __init__(self, owner, number, balance=0):
         super().__init__(owner, number, balance)
-
         config = BankConfig()
         self.rate = config.interest_rate
 
@@ -22,24 +21,21 @@ class SavingsAccount(Account):
 class CurrentAccount(Account):
     def __init__(self, owner, number, balance=0):
         super().__init__(owner, number, balance)
-
         config = BankConfig()
         self.overdraft = config.overdraft_limit
 
     def withdraw(self, amount):
-
         if amount <= 0:
             raise ValueError("Amount must be positive")
 
         if self.balance - amount < -self.overdraft:
             raise ValueError("Overdraft limit exceeded")
 
-        self._Account__balance -= amount
-
+        # Safely updates balance using the parent modifier method
+        self._set_balance(self.balance - amount)
         self.history.append(("withdraw", amount))  
 
         print(f"{amount} ETB withdrawn successfully.")
-
         self._notify(f"{amount} ETB withdrawn.")
 
     def statement(self):

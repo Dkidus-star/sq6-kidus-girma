@@ -42,7 +42,6 @@ class AccountRegistry:
         return accounts
 
     def undo_last(self, number):
-
         account = self.find(number)
 
         if account is None:
@@ -53,20 +52,31 @@ class AccountRegistry:
             print("No transaction to undo.")
             return
 
-        action, amount = account.history.pop()
+        # Read the last valid transaction without deleting it
+        # We skip existing undo entries to find the last physical action
+        idx = len(account.history) - 1
+        while idx >= 0 and account.history[idx][0] == "undo":
+            idx -= 1
+
+        if idx < 0:
+            print("No original transactions left to undo.")
+            return
+
+        action, amount = account.history[idx]
 
         if action == "deposit":
-            account._Account__balance -= amount
+            account._set_balance(account.balance - amount)
+            account.history.append(("undo", amount))  # Keep record of the undo
             print(f"Undo successful: {amount} ETB deposit reversed.")
+            account._notify(f"Undo operation: {amount} ETB deposit reversed.")
 
         elif action == "withdraw":
-            account._Account__balance += amount
+            account._set_balance(account.balance + amount)
+            account.history.append(("undo", amount))  # Keep record of the undo
             print(f"Undo successful: {amount} ETB withdrawal reversed.")
-
- 
+            account._notify(f"Undo operation: {amount} ETB withdrawal reversed.")
 
     def top_by_balance(self, n=5):
-
         accounts = sorted(
             self.by_number.values(),
             key=lambda a: a.balance,
@@ -76,7 +86,6 @@ class AccountRegistry:
         return accounts[:n]
 
     def find_by_number(self, number):
-
         numbers = sorted(self.by_number.keys())
 
         index = binary_search(numbers, number)
@@ -87,7 +96,6 @@ class AccountRegistry:
         return self.by_number[numbers[index]]
 
     def total_transactions(self, number):
-
         account = self.find(number)
 
         if account is None:
@@ -96,10 +104,10 @@ class AccountRegistry:
         return self._recursive_total(account.history, 0)
 
     def _recursive_total(self, history, index):
-
         if index == len(history):
             return 0
 
         action, amount = history[index]
 
+        # Both the original transaction and its undo count toward the total activity volume
         return amount + self._recursive_total(history, index + 1)

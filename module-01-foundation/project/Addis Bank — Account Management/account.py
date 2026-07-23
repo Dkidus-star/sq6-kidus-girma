@@ -4,13 +4,15 @@ class Account:
         self.account_number = number
         self.__balance = balance
         self._observers = []
-
-        
         self.history = []
 
     @property
     def balance(self):
         return self.__balance
+
+    def _set_balance(self, amount):
+        """Helper method to safely update balance without bypassing encapsulation."""
+        self.__balance = amount
 
     def subscribe(self, observer):
         self._observers.append(observer)
@@ -24,8 +26,6 @@ class Account:
             raise ValueError("Amount must be positive")
 
         self.__balance += amount
-
-        # save transaction
         self.history.append(("deposit", amount))
 
         print(f"{amount} ETB deposited successfully.")
@@ -39,8 +39,6 @@ class Account:
             raise ValueError("Insufficient balance")
 
         self.__balance -= amount
-
-        # save transaction
         self.history.append(("withdraw", amount))
 
         print(f"{amount} ETB withdrawn successfully.")
